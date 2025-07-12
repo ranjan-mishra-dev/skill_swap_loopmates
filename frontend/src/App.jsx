@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import UserForm from "./pages/UserForm";
 
-function App() {
-  const [count, setCount] = useState(0)
+// import React from 'react'
+// import Home from './pages/Home'
+import { Route, Routes } from "react-router-dom";
+// import Doctors from './pages/Doctors'
+// import Login from './pages/Login'
+// import MyProfile from './pages/MyProfile'
+// import MyAppoinments from './pages/MyAppoinments'
+// import Contact from './pages/Contact'
+// import Appoinment from './pages/Appoinment'
+// import Navbar from './components/Navbar'
+// import About from './pages/About'
+// import Footer from './components/Footer'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Login from "./pages/Login";
 
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="text-red-500">
+      <ToastContainer />
 
-export default App
+      <Routes>
+        <Route path="/register" element={<UserForm />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </div>
+  );
+};
+
+export default App;
