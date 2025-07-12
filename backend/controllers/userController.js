@@ -90,11 +90,11 @@ const userLogin = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   try {
-    const userId = req.userId; // set by auth middleware
+    const userId = req.userId; // from auth middleware
 
     const {
       name,
-      email,
+      email, // not editable from frontend — ignore or restrict
       password,
       location,
       skillsOffered,
@@ -102,57 +102,71 @@ const updateUserProfile = async (req, res) => {
       availability,
       isProfilePublic,
       gender,
+      profilePhoto, // <- sent as a URL string from frontend
     } = req.body;
 
-    const imageFile = req.file;
     const updateData = {};
 
     if (name) updateData.name = name;
-    if (email) updateData.email = email;
     if (location) updateData.location = location;
     if (skillsOffered) updateData.skillsOffered = skillsOffered;
     if (skillsWanted) updateData.skillsWanted = skillsWanted;
     if (availability) updateData.availability = availability;
     if (gender) updateData.gender = gender;
+
     if (typeof isProfilePublic !== "undefined") {
-      updateData.isProfilePublic = isProfilePublic === "true" || isProfilePublic === true;
+      updateData.isProfilePublic = isProfilePublic === true || isProfilePublic === "true";
     }
 
-    // Handle password securely
+    if (profilePhoto) {
+      updateData.profilePhoto = profilePhoto;
+    }
+
+    // Optional: Ignore email/password updates from frontend unless explicitly allowed
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updateData.password = hashedPassword;
     }
 
-    // Optional profile image upload
-    if (req.file) {
-  console.log("Uploading image...");
-  const imageUpload = await cloudinary.uploader.upload(req.file.path, {
-    folder: 'profile_pictures',
-  });
-  updateData.profileImage = imageUpload.secure_url;
-}
-
-
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-    });
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
     if (!updatedUser) {
       return res.status(404).json({ success: false, msg: "User not found" });
     }
 
-    return res.json({
+    res.json({
       success: true,
       msg: "Profile updated successfully",
       user: updatedUser,
     });
-
   } catch (error) {
     console.error("Error in updateUserProfile:", error);
+    res.status(500).json({ success: false, msg: error.message });
+  }
+};
+
+// controllers/userController.js
+
+// import User from '../models/userModel.js';
+
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.userId; // set from auth middleware
+
+    const user = await User.findById(userId).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    }
+
+    return res.json({ success: true, user });
+
+  } catch (error) {
+    console.error("Error in getUserProfile:", error);
     return res.status(500).json({ success: false, msg: error.message });
   }
 };
 
 
-export { registerUser, userLogin, updateUserProfile};
+
+export { registerUser, userLogin, updateUserProfile, getUserProfile};
