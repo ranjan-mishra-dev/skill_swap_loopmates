@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+
 
 // Define your backend URL (adjust as needed)
 
@@ -19,33 +21,34 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await axios.post(`${backendUrl}/api/users/login`, {
-        email: form.email,
-        password: form.password,
-      });
+  try {
+    const res = await axios.post(`${backendUrl}/api/users/login`, {
+      email: form.email,
+      password: form.password,
+    });
 
-      const data = res.data;
+    const data = res.data;
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        toast.success("Login successful");
-        // Optional: redirect or trigger auth state update
-        // window.location.href = "/dashboard";
-      } else {
-        toast.error(data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      setToken(data.token); // Update context
+      toast.success("Login successful");
+      navigate("/profile"); // ✅ Redirect to profile page
+    } else {
+      toast.error(data.message || "Login failed");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    toast.error(error.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
@@ -82,7 +85,15 @@ const Login = () => {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+        <p className="text-center text-sm text-gray-500 mt-4">
+  Don't have an account?{" "}
+  <Link to="/register" className="text-blue-600 hover:underline">
+    Register here
+  </Link>
+</p>
+
       </form>
+      
     </div>
   );
 };
