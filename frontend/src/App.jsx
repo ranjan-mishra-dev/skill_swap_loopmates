@@ -18,12 +18,14 @@ import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Home from "./Home";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <div className="text-red-500">
       <ToastContainer />
-
+      <Navbar />
+      
       <Routes>
         <Route path="/register" element={<UserForm />} />
         <Route path="/login" element={<Login />} />

@@ -118,23 +118,32 @@ const updateUserProfile = async (req, res) => {
       updateData.isProfilePublic = isProfilePublic === true || isProfilePublic === "true";
     }
 
-    const img = req.file;
+   
+const file = req.file;
+
+if (file) {
+  try {
+    const result = await cloudinary.uploader.upload(file.path, {
+      folder: "skillswap/profiles",
+    });
+    updateData.profilePhoto = result.secure_url;
+  } catch (cloudErr) {
+    console.error("Cloudinary upload failed:", cloudErr);
+    return res.status(500).json({ success: false, msg: "Failed to upload image to Cloudinary" });
+  }
+} else if (profilePhoto) {
+  // Frontend sent a Cloudinary URL directly (already uploaded)
+  updateData.profilePhoto = profilePhoto;
+}
 
 
-   if (img) {
-      try {
-        // Download the image and upload to Cloudinary
-      //  if (imageFile) {
-      const imageUpload = await cloudinary.uploader.upload(img.path, {
-        resource_type: "image",
-      });
-      const imageURL = imageUpload.secure_url;
-        updateData.profilePhoto = imageURL.secure_url;
-      } catch (cloudErr) {
-        console.error("Cloudinary upload failed:", cloudErr);
-        return res.status(500).json({ success: false, msg: "Failed to upload image to Cloudinary" });
-      }
-    }
+
+
+      // const result = await cloudinary.uploader.upload(file.path, {
+      //   folder: "skillswap/profiles",
+      // });
+      // updateData.profilePhoto = result.secure_url;
+    
 
     // Optional: Ignore email/password updates from frontend unless explicitly allowed
     if (password) {

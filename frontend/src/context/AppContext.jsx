@@ -1,34 +1,42 @@
 // src/context/AppContext.js
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify"; // ✅ Make sure react-hot-toast is installed
+
 export const AppContext = createContext();
 
-const AppProvider = (props) => {
-  const [userProfile, setUserProfile] = useState(null);
-  const [token, setToken] = useState(
-    localStorage.getItem("token") ? localStorage.getItem("token") : false
-  );
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const [userData, setUserData] = useState(false);
+const AppProvider = ({ children }) => {
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [userData, setUserData] = useState(null);
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"; // Fallback dev URL
 
   const loadUserProfileData = async () => {
     try {
-      const { data } = await axios.get(
-        backendUrl + "/api/users/update-profile",
-        { headers: { token } }
-      );
+      const { data } = await axios.get(`${backendUrl}/api/users/getProfileData`, {
+        headers: { token },
+      });
+
       if (data.success) {
-        setUserData(data.userData);
+        setUserData(data.user);
       } else {
-        toast.error(data.message);
+        toast.error(data.message || "Failed to load profile");
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.message);
+      console.error("Error loading user profile:", error);
+      toast.error(error?.response?.data?.msg || error.message || "Server error");
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      loadUserProfileData();
+    } else {
+      setUserData(null);
+    }
+  }, [token]);
+
   const value = {
-    userProfile,
     token,
     setToken,
     backendUrl,
@@ -37,9 +45,7 @@ const AppProvider = (props) => {
     loadUserProfileData,
   };
 
-  return (
-    <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export default AppProvider;

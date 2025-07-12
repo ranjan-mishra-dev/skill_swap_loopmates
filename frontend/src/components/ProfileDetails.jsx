@@ -5,6 +5,7 @@ import users from "../users.json"
 const ProfileDetail = () => {
   const { id } = useParams();
   const user = users[id]; 
+  
 
   if (!user) return <div className="text-white p-4">User not found</div>;
 
