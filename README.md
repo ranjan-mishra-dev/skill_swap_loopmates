@@ -7,8 +7,8 @@ This project was developed as part of the *Odoo Hackathon 2025*.
 
 ---
 
-## 👥 Team Name
-*LoopMates*
+# 👥 Team Name
+## LoopMates
 
 ---
 
