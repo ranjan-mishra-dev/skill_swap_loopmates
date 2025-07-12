@@ -118,8 +118,22 @@ const updateUserProfile = async (req, res) => {
       updateData.isProfilePublic = isProfilePublic === true || isProfilePublic === "true";
     }
 
-    if (profilePhoto) {
-      updateData.profilePhoto = profilePhoto;
+    const img = req.file;
+
+
+   if (img) {
+      try {
+        // Download the image and upload to Cloudinary
+      //  if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(img.path, {
+        resource_type: "image",
+      });
+      const imageURL = imageUpload.secure_url;
+        updateData.profilePhoto = imageURL.secure_url;
+      } catch (cloudErr) {
+        console.error("Cloudinary upload failed:", cloudErr);
+        return res.status(500).json({ success: false, msg: "Failed to upload image to Cloudinary" });
+      }
     }
 
     // Optional: Ignore email/password updates from frontend unless explicitly allowed
