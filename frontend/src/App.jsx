@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Home from "./Home";
 import SwapRequests from "./pages/SwapRequests";
 import Navbar from "./components/Navbar";
+import Myskill from "./pages/myskill";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/" element={<Home />} />
         <Route path="/requests" element={<SwapRequests />} />
+        <Route path="/myskill" element={<Myskill />} />
       </Routes>
     </div>
   );

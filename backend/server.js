@@ -34,6 +34,10 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRouter)
 app.use("/api/swaps", swapRoutes);
+// app.use("/api/get-all", swapRoutes);
+// router.get("/api/", userRouter);
+
+
 
 
 app.listen(PORT, () => {

@@ -35,7 +35,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                to="/my-skills"
+                to="/myskill"
                 className="group text-gray-800 font-medium hover:text-indigo-600 transition duration-200"
               >
                 My Skills
@@ -43,7 +43,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                to="/browse"
+                to="/"
                 className="group text-gray-800 font-medium hover:text-indigo-600 transition duration-200"
               >
                 Browse

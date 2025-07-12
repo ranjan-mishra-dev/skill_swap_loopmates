@@ -55,6 +55,16 @@ const registerUser = async (req, res) => {
   }
 };
 
+// controllers/userController.js
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password"); // exclude passwords
+    res.json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch users" });
+  }
+};
+
 
 const userLogin = async (req, res) => {
   try {
@@ -192,4 +202,4 @@ const getUserProfile = async (req, res) => {
 
 
 
-export { registerUser, userLogin, updateUserProfile, getUserProfile};
+export { registerUser, userLogin, updateUserProfile, getUserProfile, getAllUsers};
